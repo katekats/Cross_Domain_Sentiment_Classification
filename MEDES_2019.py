@@ -1,7 +1,4 @@
 
-# coding: utf-8
-
-# In[1]:
 
 
 #from bs4 import BeautifulSoup
@@ -60,8 +57,6 @@ import imblearn
 from imblearn.pipeline import make_pipeline
 from imblearn.over_sampling import ADASYN, SMOTE, RandomOverSampler
 
-
-# In[2]:
 
 
 def read_data(filename):
@@ -192,8 +187,6 @@ ek = df_electronics.append(df_kitchen, ignore_index=True)
 dk = df_dvd.append(df_kitchen, ignore_index=True)
 
 
-# In[9]:
-
 
 sample_df = df_dvd
 #Functions for preprocessing steps
@@ -244,35 +237,22 @@ sample_df['tokenized'] = tokenize(sample_df,'nohtml')
 sample_df['#token'] = word_count(sample_df,'tokenized')
 
 
-# In[10]:
-
-
 sample_df_dvd =sample_df[sample_df["#token"]>75].reset_index(drop=True)
 #sample_df_dvd =sample_df
 
-
-# In[8]:
 
 
 sample_df_books=sample_df[sample_df["#token"]>80].reset_index(drop=True)
 #sample_df_books =sample_df
 
 
-# In[6]:
-
-
 sample_df_electronics=sample_df[sample_df["#token"]>=55].reset_index(drop=True)
 #sample_df_electronics = sample_df
 
 
-# In[4]:
-
 
 sample_df_kitchen=sample_df[sample_df["#token"]>=54].reset_index(drop=True)
 #sample_df_kitchen = sample_df
-
-
-# In[11]:
 
 
 #Appending the datasets CDSA 
@@ -290,8 +270,6 @@ ek = sample_df_electronics.append(sample_df_kitchen, ignore_index=True)
 dk = sample_df_dvd.append(sample_df_kitchen, ignore_index=True)
 sample_df1=db
 
-
-# In[12]:
 
 
 sample_df = sample_df1.copy()
@@ -360,8 +338,6 @@ for  index2, row2 in sample_df[1637:1737].iterrows():
 
 # # Exclude nouns
 
-# In[13]:
-
 
 sample_df["tokenized2"] = sample_df.tokenized   
 
@@ -371,9 +347,6 @@ for  index, row in sample_df.iterrows():
     #print(noun)
     row["tokenized2"] =  [word for word in row["tokenized2"] if word not in noun]
     sample_df.set_value(index,'tokenized2',row["tokenized2"])
-
-
-# In[3]:
 
 
 #from pyfasttext import FastText
@@ -434,10 +407,6 @@ from sklearn.metrics import accuracy_score
 #from sklearn.cross_validation import cross_val_score
 #from sklearn.cross_validation import StratifiedShuffleSplit
 from collections import Counter, defaultdict
-
-
-# In[ ]:
-
 
 
 y= sample_df.label
@@ -560,10 +529,6 @@ class TfidfEmbeddingVectorizer2(object):
                         [np.zeros(self.dim)], axis=0)
                 for words in X2
             ])   
-
-
-# In[ ]:
-
 
 from mlxtend.classifier import StackingClassifier
 from sklearn.pipeline import make_pipeline
@@ -695,9 +660,6 @@ log_reg_fasttext_tfidf2 = Pipeline([("col_sel", ColumnSelector(cols=8, drop_axis
 
 svm_fasttext_tfidf2 = Pipeline([("col_sel", ColumnSelector(cols=8, drop_axis=True)), ("fasttext vectorizer", TfidfEmbeddingVectorizer2(fasttext2)), 
                             ("LinearSVC", SVC(random_state=0, kernel="linear", tol=1e-5, probability=True))])
-
-
-# In[ ]:
 
 
 from mlxtend.classifier import StackingClassifier
