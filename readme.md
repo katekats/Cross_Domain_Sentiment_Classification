@@ -58,4 +58,4 @@ Clone your fork, create a new branch, make your changes and improvements, and pu
 Create a pull request detailing your changes.
 License
 
-This project is licensed under the MIT License.
+This project is licensed under the GNU AFFERO GENERAL PUBLIC LICENSE
