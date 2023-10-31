@@ -9,40 +9,54 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from mlxtend.classifier import SuperLearner
 import fasttext  # assuming you have installed the fasttext library
-from feature_extractor import sample_df, fasttext, fasttext2
+from feature_extractor_var import sample_df, fasttext, fasttext2
 from embedding_vectorizers import TfidfEmbeddingVectorizer, MeanEmbeddingVectorizer
 import data_loader 
 import data_preprocessor
 from feature_extractor import main as feature_extractor_main
 
+# define constraints
+COL_INDEX=7
 
 
-def build_classifier_pipelines():
-    """Create and return classifier pipelines."""
-    
+def build_preprocessing_pipeline():
+    """Create and return preprocessing pipeline without classifier."""
+    # Assuming COL_INDEX and MeanEmbeddingVectorizer(fasttext) are the preprocessing steps
+    preprocessing_pipeline = Pipeline([
+        ('selector', ColumnSelector(columns=COL_INDEX)),
+        ('mean_vectorizer', MeanEmbeddingVectorizer(fasttext))
+    ])
+    return preprocessing_pipeline
+
+def build_log_reg_fasttext_pipeline():
+    """Create and return logistic regression with fasttext pipeline."""
     logistic_l2 = LogisticRegression(penalty="l2", random_state=0)
-    svc_linear = SVC(random_state=0, kernel="linear", tol=1e-5, probability=True)
+    return create_pipeline(COL_INDEX, MeanEmbeddingVectorizer(fasttext), logistic_l2)
 
-    # Construct pipelines
-    log_reg_fasttext_tfidf = create_pipeline(COL_INDEX, TfidfEmbeddingVectorizer(fasttext), logistic_l2)
-    log_reg_fasttext = create_pipeline(COL_INDEX, MeanEmbeddingVectorizer(fasttext), logistic_l2)
-    svm_fasttext = create_pipeline(COL_INDEX, MeanEmbeddingVectorizer(fasttext), svc_linear)
-    svm_fasttext_tfidf = create_pipeline(COL_INDEX, TfidfEmbeddingVectorizer(fasttext), svc_linear)
-    log_reg_fasttext_tfidf2 = create_pipeline(COL_INDEX+1, TfidfEmbeddingVectorizer(fasttext2), logistic_l2)
-    svm_fasttext_tfidf2 = create_pipeline(COL_INDEX+1, TfidfEmbeddingVectorizer(fasttext2), svc_linear)
-       
-    return [log_reg_fasttext_tfidf, log_reg_fasttext, svm_fasttext, svm_fasttext_tfidf, log_reg_fasttext_tfidf2]
+def build_svm_fasttext_pipeline():
+    """Create and return SVM with fasttext pipeline."""
+    svc_linear = SVC(random_state=0, kernel="linear", tol=1e-5, probability=True)
+    return create_pipeline(COL_INDEX, MeanEmbeddingVectorizer(fasttext), svc_linear)
 
 def train_ensemble(X_train, y_train):
     """Train ensemble using given training data."""
     
     ensemble = SuperLearner(scorer=accuracy_score, random_state=RANDOM_STATE)
     ensemble.add(build_classifier_pipelines())
-    ensemble.add_meta(LogisticRegression(penalty="l2", random_state=RANDOM_STATE))
+    
+    # Adding the desired pipelines and classifiers to meta layer
+    meta_models = [
+        build_preprocessing_pipeline(),
+        LogisticRegression(penalty="l2", random_state=RANDOM_STATE),
+        build_log_reg_fasttext_pipeline(),
+        build_svm_fasttext_pipeline()
+    ]
+    ensemble.add_meta(meta_models)
     
     ensemble.fit(X_train, y_train)
     
     return ensemble
+
 
 def main():
     df_books, df_dvd, df_kitchen, df_electronics = data_loader.main()
@@ -55,7 +69,7 @@ def main():
     for dataset_key in all_dataset_keys:
         print(f"Processing for dataset key: {dataset_key}")
         
-        sample_df, fasttext, fasttext2, desired_last_row_number = feature_extractor_main(None, datasets, combinations, dataset_key)
+        sample_df, fasttext, desired_last_row_number = feature_extractor_main(None, datasets, combinations, dataset_key)
         
         # Training data
         X_train = sample_df.iloc[:desired_last_row_number + 101].drop(columns=['label']).values
@@ -76,7 +90,3 @@ def main():
     # Convert results to DataFrame for better visualization
     df_results = pd.DataFrame(results, columns=["Dataset Key", "Accuracy"])
     print(df_results)
-
-
-if __name__ == "__main__":
-    main()

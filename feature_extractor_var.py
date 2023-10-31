@@ -1,4 +1,4 @@
-import collections
+mport collections
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_selection import chi2
 from nltk.tag import pos_tag
@@ -47,7 +47,7 @@ def extract_features_below_threshold(features, scores, threshold):
     """
     return [k for k, v in zip(features, scores) if v < threshold]
 
-def modify_tokenized_data(sample_df, list_sent_gen, list_sent_domain, , last_row_number):
+def modify_tokenized_data(sample_df, list_sent_gen, list_sent_domain, last_row_number):
       """
     Modifies the 'tokenized1' column of the input dataframe based on specified feature lists.
     
@@ -75,8 +75,6 @@ def exclude_nouns(tokenized_data):
     return [[word for word in words if not word.startswith('N')] for words in tokenized_data]
 
 
-
-
 def download_fasttext_model(model_name="cc.en.300.bin"):
     """Download the specified FastText pre-trained model."""
     
@@ -102,7 +100,8 @@ def df_to_data(model, df, tokenized_column):
     return {word: model.get_word_vector(word).astype('float32') for word in all_words}
 
 def main(sample_df, datasets, combinations, dataset_key):
-   # Storing last row number of df1 for each combined dataset
+       
+    # Storing last row number of df1 for each combined dataset
     last_row_of_df1 = {key: len(datasets[df1]) - 1 for key, (df1, df2) in combinations.items()}
 
     combined_datasets = {
@@ -114,42 +113,29 @@ def main(sample_df, datasets, combinations, dataset_key):
 
     # Fetching the last row number of df1 for the specific dataset_key
     desired_last_row_number = last_row_of_df1[dataset_key]
+    
+    # Exclude nouns from 'nohtml' column
+    sample_df["no_nouns"] = exclude_nouns(sample_df["nohtml"])
 
     # Compute the chi-squared statistics for important features with respect to the product domain.
-    # 'cat_topchi2score' will store the top features and their corresponding chi2 scores.
-    # 'features1' is a list of feature names and 'cat_chi2score1' contains the p-values for each feature.
-    cat_topchi2score, features1, cat_chi2score1 = compute_chi2(sample_df.nohtml.values, sample_df.code, 1000)
+    cat_topchi2score, features1, cat_chi2score1 = compute_chi2(sample_df.no_nouns.values, sample_df.code, 1000)
     # Compute the chi-squared statistics for important features with respect to sentiment classification.
-    # 'topchi2score' will store the top features and their corresponding chi2 scores for sentiment.
-    # 'features' is a list of feature names and 'chi2score1' contains the p-values for each feature.
-    topchi2score, features, chi2score1 = compute_chi2(sample_df.nohtml[0:2000].values, sample_df.label[0:2000], 6000)
+    topchi2score, features, chi2score1 = compute_chi2(sample_df.no_nouns[0:2000].values, sample_df.label[0:2000], 6000)
 
-    # 'list_domain' contains features significant for product domain classification.
-    # It filters features with p-values below the threshold of 0.05, which means these features are statistically significant.
     list_domain = extract_features_below_threshold(features1, cat_chi2score1, 0.05)
-    # 'list_sentiment' contains features significant for sentiment classification.
-    # It filters features with p-values below the threshold of 0.05.
     list_sentiment = extract_features_below_threshold(features, chi2score1, 0.05)
-     # 'list_sent_gen' contains the sentiment features that are not present in domain features.
-    # This step is to ensure that general sentiment features that are not domain-specific are identified.
     list_sent_gen = [k for k in list_sentiment if k not in list_domain]
-    # 'list_sent_domain' contains all sentiment features.
-    # This list captures all the features considered during chi2 calculations for sentiment classification.
     list_sent_domain = [k for k, v in zip(features, chi2score1)]
     
     # Modifying tokenized data
-    sample_df = modify_tokenized_data(sample_df, list_sent_gen, list_sent_domain, desired_last_row_number)
-
-
-    # Exclude nouns
-    sample_df["tokenized2"] = exclude_nouns(sample_df["tokenized"])
+    sample_df = modify_tokenized_data(sample_df, list_sent_gen, list_sent_domain)
 
     # Convert to fastText embeddings
     ft_model = download_fasttext_model()
     # the tokenized text after feature extraction with chisquare
     fasttext = df_to_data(ft_model, sample_df, 'tokenized')
     # the tokenized text after the noun exclusion
-    fasttext2 = df_to_data(ft_model, sample_df, 'tokenized2')
+    
 
     return sample_df, fasttext, fasttext2, desired_last_row_number
 
@@ -160,5 +146,7 @@ if __name__ == '__main__':
     # Import the datasets and combinations directly within the __main__ block
     from data_preprocessor import datasets, combinations
     
-    sample_df, fasttext, fasttext2, desired_last_row_number = main(None, datasets, combinations, dataset_key)
+    sample_df, fasttext, desired_last_row_number = main(None, datasets, combinations, dataset_key)
+
+
 
