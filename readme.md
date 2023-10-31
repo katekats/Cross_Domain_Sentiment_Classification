@@ -13,11 +13,11 @@ Usage
 
 
 **Description of the scripts**
-* data_loader.py: Contains the process_data function which loads and processes the raw data for various product categories and sentiments.
-* data_preprocessor.py: This module offers the preprocess_data function which prepares data for feature extraction.
-* feature_extractor.py: The main feature extraction module. Contains functions like extract_important_features for Chi-squared feature extraction, exclude_nouns to filter out noun words, and df_to_fasttext_data for generating FastText embeddings.
-* classifiers.py: Holds the classifier pipeline creation and ensemble model training logic. Includes various embedding vectorizers and a stacking ensemble model approach.
-* main.py: The main executable script that brings everything together. Loads data, processes it, extracts features, and trains the ensemble model.
+* **data_loader.py**: Contains the process_data function which loads and processes the raw data for various product categories and sentiments.
+* **data_preprocessor.py**: This module offers the preprocess_data function which prepares data for feature extraction.
+* **feature_extractor.py**: The main feature extraction module. Contains functions like extract_important_features for Chi-squared feature extraction, exclude_nouns to filter out noun words, and df_to_fasttext_data for generating FastText embeddings.
+* **classifiers.py**: Holds the classifier pipeline creation and ensemble model training logic. Includes various embedding vectorizers and a stacking ensemble model approach.
+* **main.py**: The main executable script that brings everything together. Loads data, processes it, extracts features, and trains the ensemble model.
 
 
 This project is licensed under the GNU AFFERO GENERAL PUBLIC LICENSE
