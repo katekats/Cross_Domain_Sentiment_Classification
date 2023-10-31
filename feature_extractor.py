@@ -73,9 +73,7 @@ def modify_tokenized_data(sample_df, list_sent_gen, list_sent_domain):
 def exclude_nouns(tokenized_data):
     return [[word for word in words if not word.startswith('N')] for words in tokenized_data]
 
-def df_to_data(model, df, tokenized_column):
-    all_words = set(w for words in df[tokenized_column] for w in words)
-    return {word: model.get_word_vector(word).astype('float32') for word in all_words}
+
 
 
 def download_fasttext_model(model_name="cc.en.300.bin"):
@@ -98,10 +96,12 @@ def download_fasttext_model(model_name="cc.en.300.bin"):
 
     return model_name
 
+def df_to_data(model, df, tokenized_column):
+    all_words = set(w for words in df[tokenized_column] for w in words)
+    return {word: model.get_word_vector(word).astype('float32') for word in all_words}
 
-
-def main(sample_df):
-    # Assuming you have a function to load or define datasets and combinations
+def main(sample_df, datasets, combinations, dataset_key):
+    
     
     combined_datasets = {
         key: datasets[df1].append(datasets[df2], ignore_index=True) 
@@ -148,11 +148,14 @@ def main(sample_df):
     return sample_df, fasttext, fasttext2
 
 if __name__ == '__main__':
-     parser = argparse.ArgumentParser(description='Feature Extractor for Datasets.')
+    parser = argparse.ArgumentParser(description='Feature Extractor for Datasets.')
     parser.add_argument('--dataset_key', type=str, required=True,
                         help='Key for the dataset to be processed, e.g., "db"')
     args = parser.parse_args()
     
-    sample_df, fasttext, fasttext2 = main(args)
+    # Import the datasets and combinations directly within the __main__ block
+    from data_preprocessor import datasets, combinations
+    
+    sample_df, fasttext, fasttext2 = main(None, datasets, combinations, args.dataset_key)
 
 

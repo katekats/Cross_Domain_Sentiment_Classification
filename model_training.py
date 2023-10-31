@@ -12,7 +12,8 @@ import fasttext  # assuming you have installed the fasttext library
 from feature_extractor import sample_df, fasttext, fasttext2
 from embedding_vectorizers import TfidfEmbeddingVectorizer, MeanEmbeddingVectorizer
 import data_loader 
-import data preprocessor
+import data_preprocessor
+from feature_extractor import main as feature_extractor_main
 
 
 RANDOM_STATE = 0
@@ -47,20 +48,34 @@ def train_ensemble(X_train, y_train):
     return ensemble
 
 def main():
-            df_books, df_dvd, df_kitchen, df_electronics = data_loader.main()
-                                                       = data_preprocessor.preprocess_datasets()
-            X_train, X_test, y_train, y_test = train_test_split(
-                sample_df.drop(columns=['label']).values, 
-                sample_df.label.values,
-                train_size=TRAIN_SIZE, 
-                random_state=RANDOM_STATE
-            )
-            
-            ensemble_model = train_ensemble(X_train, y_train)
-            
-            preds = ensemble_model.predict(X_test)
-            accuracy = accuracy_score(y_test, preds)
-            print(f"Accuracy for {category} - {sentiment}: {accuracy:.4f}")
+    df_books, df_dvd, df_kitchen, df_electronics = data_loader.main()
+    datasets, combinations = data_preprocessor.preprocess_datasets(df_books, df_dvd, df_kitchen, df_electronics)
+    
+    all_dataset_keys = ['bd', 'bk', 'db', 'eb', 'kb', 'ed', 'kd', 'be', 'de', 'ke', 'dk']
+    
+    results = []  # to store accuracy results for each dataset_key
+    
+    for dataset_key in all_dataset_keys:
+        print(f"Processing for dataset key: {dataset_key}")
+        
+        sample_df, fasttext, fasttext2 = feature_extractor_main(None, datasets, combinations, dataset_key)
+        
+        X_train, X_test, y_train, y_test = train_test_split(
+            sample_df.drop(columns=['label']).values, 
+            sample_df.label.values,
+            train_size=TRAIN_SIZE, 
+            random_state=RANDOM_STATE
+        )
+        
+        ensemble_model = train_ensemble(X_train, y_train)
+        
+        preds = ensemble_model.predict(X_test)
+        accuracy = accuracy_score(y_test, preds)
+        results.append((dataset_key, accuracy))
+
+    # Convert results to DataFrame for better visualization
+    df_results = pd.DataFrame(results, columns=["Dataset Key", "Accuracy"])
+    print(df_results)
 
 if __name__ == "__main__":
     main()

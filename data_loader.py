@@ -63,21 +63,6 @@ def main(base_path="."):
     df_dvd = load_dataset(f'{base_path}/dvd', "dvd")
     df_kitchen = load_dataset(f'{base_path}/kitchen', "kitchen")
     df_electronics = load_dataset(f'{base_path}/electronics', "electronics")
-
-    # Appending the datasets
-    #bd = df_books.append(df_dvd, ignore_index=True)
-    #bk = df_books.append(df_kitchen, ignore_index=True)
-    #db = df_dvd.append(df_books, ignore_index=True)
-    #eb = df_electronics.append(df_books, ignore_index=True)
-    #kb = df_kitchen.append(df_books, ignore_index=True)
-    #ed = df_electronics.append(df_dvd, ignore_index=True)
-    #kd = df_kitchen.append(df_dvd, ignore_index=True)
-    #be = df_books.append(df_electronics, ignore_index=True)
-    #de = df_dvd.append(df_electronics, ignore_index=True)
-    #ke = df_kitchen.append(df_electronics, ignore_index=True)
-    #ek = df_electronics.append(df_kitchen, ignore_index=True)
-    #dk = df_dvd.append(df_kitchen, ignore_index=True)
-    #return bd, bk, db, eb, kb, ed, kd, be, de, ke, ek, dk
     return df_books, df_dvd, df_kitchen, df_electronics
 
 if __name__=='__main__':
