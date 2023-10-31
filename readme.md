@@ -7,8 +7,10 @@ For running the framework, this work recommends creating a new virtual environme
 Afterward, you can install the packages in the requirements.txt of the requirements_files directory to get started. Using anaconda, the commands look like this:
 
 conda create -n myenv python=3.7.7
+
 conda activate myenv
-conda install --file requirements_files/requirements.txt
+
+conda install --file requirements.txt
 
 ## **Steps for running the scripts**
 
