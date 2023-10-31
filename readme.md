@@ -14,7 +14,7 @@ conda install --file requirements_files/requirements.txt
 
 
 ```
-.
+
 ├── data_loader.py          # Script to load and process raw data
 ├── data_preprocessor.py    # Script containing data preprocessing functions
 ├── feature_extractor.py    # Script for feature extraction and embeddings
