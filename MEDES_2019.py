@@ -325,7 +325,7 @@ sample_df["tokenized1"] = sample_df.tokenized
 for  index, row in sample_df[0:1637].iterrows():
    
     row["tokenized1"] =  [word for word in row["tokenized1"] if word in list5]
-    sample_df[0:1645].set_value(index,'tokenized1',row["tokenized1"])   
+    sample_df.at[index, 'tokenized1'] = row["tokenized1"]  
     
 for  index2, row2 in sample_df[1637:1737].iterrows():
    
