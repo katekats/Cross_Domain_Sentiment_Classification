@@ -1,6 +1,14 @@
-Text Classification with Feature Engineering and Ensembling
+##Cross-Domain Sentiment Classification with Chi-square for Feaure Extraction and Ensembling
 
 This project focuses on text classification using various feature extraction techniques, including TF-IDF, FastText embeddings, and Chi-squared statistics. Additionally, an ensemble learning approach using SuperLearner from mlxtend is employed.
+
+## Getting Started
+For running the framework, this work recommends creating a new virtual environment that uses Python version 3.7.7.
+Afterward, you can install the packages in the requirements.txt of the requirements_files directory to get started. Using anaconda, the commands look like this:
+```bash
+conda create -n myenv python=3.7.7
+conda activate myenv
+conda install --file requirements_files/requirements.txt
 
 **Steps for running the scripts**  
 
@@ -9,7 +17,7 @@ This project focuses on text classification using various feature extraction tec
 ├── feature_extractor.py    # Script for feature extraction and embeddings
 ├── classifiers.py          # Script containing classifier pipelines and ensemble model
 ├── main.py                 # Main script to execute the project
-└── README.md               # This file
+└── README.md               # Documentation and usage instructions
 
 
 For running the feature extractor, we need to give the name of the domains we want to use as source and target domains:
