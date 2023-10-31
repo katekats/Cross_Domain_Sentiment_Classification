@@ -13,13 +13,15 @@ conda install --file requirements_files/requirements.txt
 ## **Steps for running the scripts**
 
 
+```
+.
 ├── data_loader.py          # Script to load and process raw data
 ├── data_preprocessor.py    # Script containing data preprocessing functions
 ├── feature_extractor.py    # Script for feature extraction and embeddings
 ├── classifiers.py          # Script containing classifier pipelines and ensemble model
 ├── main.py                 # Main script to execute the project
 └── README.md               # Documentation and usage instructions
-
+```
 
 For running the feature extractor, we need to give the name of the domains we want to use as source and target domains:
 **python feature_extractor.py --dataset_key xy**
