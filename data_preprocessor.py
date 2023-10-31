@@ -66,10 +66,8 @@ def main():
         'dk': ('dvd','kitchen')
         
     }
+    return datasets, combinations
     
-    combined_datasets = {key: datasets[df1].append(datasets[df2], ignore_index=True) for key, (df1, df2) in combinations.items()}
-    
-    sample_df = combined_datasets.get('db').copy()
 
 if __name__ == '__main__':
     main()

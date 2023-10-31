@@ -6,6 +6,8 @@ from fastText import load_model
 import numpy as np
 import os
 import urllib.request
+import argparse
+from data_preprocessor import datasets, combinations
 
 def compute_chi2(data, labels, feature_limit=None):
     """
@@ -99,6 +101,15 @@ def download_fasttext_model(model_name="cc.en.300.bin"):
 
 
 def main(sample_df):
+    # Assuming you have a function to load or define datasets and combinations
+    
+    combined_datasets = {
+        key: datasets[df1].append(datasets[df2], ignore_index=True) 
+        for key, (df1, df2) in combinations.items()
+    }
+    
+    sample_df = combined_datasets.get(args.dataset_key).copy()
+
     # Compute the chi-squared statistics for important features with respect to the product domain.
     # 'cat_topchi2score' will store the top features and their corresponding chi2 scores.
     # 'features1' is a list of feature names and 'cat_chi2score1' contains the p-values for each feature.
@@ -135,6 +146,11 @@ def main(sample_df):
     return sample_df, fasttext, fasttext2
 
 if __name__ == '__main__':
-    sample_df, fasttext, fasttext2 = main(sample_df)
+     parser = argparse.ArgumentParser(description='Feature Extractor for Datasets.')
+    parser.add_argument('--dataset_key', type=str, required=True,
+                        help='Key for the dataset to be processed, e.g., "db"')
+    args = parser.parse_args()
+    
+    sample_df, fasttext, fasttext2 = main(args)
 
 
