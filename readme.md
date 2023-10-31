@@ -43,9 +43,8 @@ The possible combinations are:
         'de': ('dvd','electronics'),
         'ke': ('kitchen', 'electronics'),
         'ek': ('electronics', 'kitchen'),
-        'dk': ('dvd','kitchen')
+        'dk': ('dvd','kitchen')}
         
-    }
 
 **Description of the scripts**
 * **data_loader.py**: Contains the process_data function, which loads and processes the raw data for various product categories and sentiments.
