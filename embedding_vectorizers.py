@@ -3,9 +3,9 @@ from collections import defaultdict
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 class BaseEmbeddingVectorizer:
-    def __init__(self, word2vec):
-        self.word2vec = word2vec
-        self.dim = len(word2vec[next(iter(word2vec))]) if word2vec else None
+    def __init__(self, fasttext_embeddings):
+        self.fasttext_embeddings = fasttext_embeddings
+        self.dim = len(fasttext_embeddings[next(iter(fasttext_embeddings))]) if fasttext_embeddings else None
 
     def fit(self, X, y=None):
         return self
@@ -14,13 +14,13 @@ class BaseEmbeddingVectorizer:
         raise NotImplementedError()
 
     def get_params(self, deep=True):
-        return {'word2vec': self.word2vec}
+        return {'fasttext_embeddings': self.fasttext_embeddings}
 
 
 class MeanEmbeddingVectorizer(BaseEmbeddingVectorizer):
     def transform(self, X):
         return np.array([
-            np.mean([self.word2vec[w] for w in words if w in self.word2vec]
+            np.mean([self.fasttext_embeddings[w] for w in words if w in self.fasttext_embeddings]
                     or [np.zeros(self.dim)], axis=0)
             for words in X
         ])
@@ -37,7 +37,7 @@ class TfidfEmbeddingVectorizer(BaseEmbeddingVectorizer):
 
     def transform(self, X):
         return np.array([
-            np.mean([self.word2vec[w] * self.word2weight[w] for w in words if w in self.word2vec]
+            np.mean([self.fasttext_embeddings[w] * self.word2weight[w] for w in words if w in self.fasttext_embeddings]
                     or [np.zeros(self.dim)], axis=0)
             for words in X
         ])

@@ -44,7 +44,7 @@ def train_ensemble(X_train, y_train):
 
 
 def main():
-    base_path = 'Downloads/processed_acl/'
+    base_path = 'processed_acl/'
     categories = ['books', 'dvd', 'kitchen', 'electronics']
 
     # Assuming that you always want to apply transformations or models on the same column, set a global COL_INDEX

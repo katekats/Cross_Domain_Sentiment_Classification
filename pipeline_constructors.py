@@ -2,6 +2,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
 from mlxtend.preprocessing import DenseTransformer 
+from feature_extractor import fasttext, fasttext2
+
 
 class ColumnSelector(BaseEstimator):
     """Object for selecting specific columns from a data set.
@@ -59,9 +61,7 @@ class ColumnSelector(BaseEstimator):
     
     return t
 
-    from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.pipeline import Pipeline
+
 
 def create_pipeline(column, vectorizer, classifier):
     return Pipeline([
@@ -75,10 +75,11 @@ logistic_l2 = LogisticRegression("l2", random_state=0)
 svc_linear = SVC(random_state=0, kernel="linear", tol=1e-5, probability=True)
 
 # Construct pipelines
-log_reg_fasttext_tfidf = create_pipeline(5, TfidfEmbeddingVectorizer(fasttext), logistic_l2)
-log_reg_fasttext2 = create_pipeline(5, MeanEmbeddingVectorizer(fasttext), logistic_l2)
-svm_fasttext = create_pipeline(5, MeanEmbeddingVectorizer(fasttext), svc_linear)
-log_reg_fasttext_tfidf2 = create_pipeline(7, TfidfEmbeddingVectorizer(fasttext2), logistic_l2)
-svm_fasttext_tfidf = create_pipeline(5, TfidfEmbeddingVectorizer(fasttext), svc_linear)
+log_reg_fasttext_tfidf = create_pipeline(7, TfidfEmbeddingVectorizer(fasttext), logistic_l2)
+log_reg_fasttext = create_pipeline(7, MeanEmbeddingVectorizer(fasttext), logistic_l2)
+svm_fasttext = create_pipeline(7, MeanEmbeddingVectorizer(fasttext), svc_linear)
+svm_fasttext_tfidf = create_pipeline(7, TfidfEmbeddingVectorizer(fasttext), svc_linear)
+log_reg_fasttext_tfidf2 = create_pipeline(8, TfidfEmbeddingVectorizer(fasttext2), logistic_l2)
+svm_fasttext_tfidf = create_pipeline(8, TfidfEmbeddingVectorizer(fasttext2), svc_linear)
 
 # Add any more pipelines as needed
