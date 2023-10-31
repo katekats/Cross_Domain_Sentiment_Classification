@@ -6,9 +6,11 @@ This project focuses on text classification using various feature extraction tec
 For running the framework, this work recommends creating a new virtual environment that uses Python version 3.7.7.
 Afterward, you can install the packages in the requirements.txt of the requirements_files directory to get started. Using anaconda, the commands look like this:
 
-conda create -n myenv python=3.7.7
-conda activate myenv
-conda install --file requirements_files/requirements.txt
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
 ## **Steps for running the scripts**
 
