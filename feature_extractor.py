@@ -140,7 +140,9 @@ def main(sample_df):
 
     # Convert to fastText embeddings
     ft_model = download_fasttext_model()
+    # the tokenized text after feature extraction with chisquare
     fasttext = df_to_data(ft_model, sample_df, 'tokenized')
+    # the tokenized text after the noun exclusion
     fasttext2 = df_to_data(ft_model, sample_df, 'tokenized2')
 
     return sample_df, fasttext, fasttext2
