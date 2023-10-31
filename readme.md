@@ -10,7 +10,8 @@ conda create -n myenv python=3.7.7
 conda activate myenv
 conda install --file requirements_files/requirements.txt
 
-**Steps for running the scripts**  
+**Steps for running the scripts**
+
 
 ├── data_loader.py          # Script to load and process raw data
 ├── data_preprocessor.py    # Script containing data preprocessing functions
