@@ -1,4 +1,4 @@
-##Cross-Domain Sentiment Classification with Chi-square for Feaure Extraction and Ensembling
+# Cross-Domain Sentiment Classification with Chi-square for Feature Extraction and Ensembling
 
 This project focuses on text classification using various feature extraction techniques, including TF-IDF, FastText embeddings, and Chi-squared statistics. Additionally, an ensemble learning approach using SuperLearner from mlxtend is employed.
 
@@ -10,7 +10,7 @@ conda create -n myenv python=3.7.7
 conda activate myenv
 conda install --file requirements_files/requirements.txt
 
-**Steps for running the scripts**
+## **Steps for running the scripts**
 
 
 ├── data_loader.py          # Script to load and process raw data
