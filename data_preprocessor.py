@@ -1,56 +1,74 @@
 import nltk
 import pandas as pd
 from functools import partial
+from data_loader import main as load_data
 
 stop = set(('i','im','ive', 'me','my','myself','we','our','ours','ourselves','you','youre','youve','youll','youd','your','yours','yourself','yourselves','he','him','his','himself','she','shes','her','hers','herself','it','its','itself','they','them','their','theirs','themselves','what','which','who','whom','this','that','thatll','these','those','am','is','are','was','were','be','been','being','have','has','had','having','do','does','did','doing','a','an','the','and','but','if','or','because','as','until','while','of','at','by','for','with','about','against','between','into','through','during','before','after','above','below','to','from','up','down','in','out','on','off','over','under','again','further','then','once','here','there','when','where','why','how','all','any','both','each','few','more','most','other','some','such','only','own','same','so','than','too','very','s','t','can','will','just','should','shouldve','now','d','ll','m','o','re','ve','y','ma'))
 
 sno = nltk.stem.SnowballStemmer('english')
 
-  # assuming stop words are not defined before
+def remove_url(text):
+    return re.sub('^http?:\/\/.*[\r\n]*', '', text)
 
-def process_column(df, col, func, *args, **kwargs):
-    df[col] = df[col].apply(func, args=args, **kwargs)
-    return df
+def lower_text(text):
+    return text.lower()
 
-replace_in_column = partial(process_column, func=lambda x, pattern, sub: x.replace(pattern, sub))
-lower_column = partial(process_column, func=str.lower)
-remove_from_column = partial(process_column, func=lambda x, pattern: x.replace(pattern, ''))
-remove_stopwords = partial(process_column, func=lambda x: " ".join(word for word in x.split() if word not in stop))
-stem_column = partial(process_column, func=lambda x: " ".join(sno.stem(word) for word in x.split()))
-tokenize_column = partial(process_column, func=nltk.word_tokenize)
-word_count_column = partial(process_column, func=lambda x: len(x.split()))
+def remove_numbers(text):
+    return re.sub('[0-9]+', '', text)
+
+def remove_punctuations(text):
+    return re.sub('[^\w\s]', ' ', text)
+
+def remove_stopwords(text):
+    return " ".join(word for word in text.split() if word not in stop)
+
+def stem_text(text):
+    return " ".join(sno.stem(word) for word in text.split())
+
+def tokenize_text(text):
+    return nltk.word_tokenize(text)
+
+def word_count(text):
+    return len(text.split())
 
 def preprocess_dataframe(df, col_name):
-    df = replace_in_column(df, col_name, '^http?:\/\/.*[\r\n]*', '')
-    df = lower_column(df, 'nohtml')
-    df = remove_from_column(df, 'nohtml', '[0-9]+')
-    
-    punctuations = ['[^\w\s]', '_', r'\b(no|not|nt|dont|doesnt|doesn|don|didnt|cant|cannt|cannot|wouldnt|wont|couldnt|hasnt|havent|hadnt|shouldnt)\s+([a-z])']
-    for punct in punctuations:
-        df = replace_in_column(df, 'nohtml', punct, ' ')
-    
-    df = remove_stopwords(df, 'nohtml')
-    df = tokenize_column(df, 'nohtml')
-    df = word_count_column(df, 'tokenized')
+    df[col_name] = (df[col_name].apply(remove_url)
+                                    .apply(lower_text)
+                                    .apply(remove_numbers)
+                                    .apply(remove_punctuations)
+                                    .apply(remove_stopwords)
+                                    .apply(stem_text))
+    df["#token"] = df[col_name].apply(tokenize_text)
+    df["word_count"] = df[col_name].apply(word_count)
     return df
 
 def filter_dataset_by_token_count(df, token_count):
     return df[df["#token"] > token_count].reset_index(drop=True)
 
-def main():
-    global sample_df
-    
-    sample_df = preprocess_dataframe(sample_df, 'reviews')
-    
+def preprocess_datasets():
+    # Load datasets
+    df_books, df_dvd, df_kitchen, df_electronics = load_data()
+
+    data_dict = {
+        'books': df_books,
+        'dvd': df_dvd,
+        'electronics': df_electronics,
+        'kitchen': df_kitchen
+    }
+
     criteria = {
         'books': 80,
         'dvd': 75,
         'electronics': 55,
         'kitchen': 54
     }
-    
-    datasets = {key: filter_dataset_by_token_count(sample_df, value) for key, value in criteria.items()}
-    
+
+    # Preprocess each dataset and filter based on criteria
+    for key, df in data_dict.items():
+        df = preprocess_dataframe(df, 'reviews')
+        df = filter_dataset_by_token_count(df, criteria[key])
+        data_dict[key] = df
+
     combinations = {
         'bd': ('books', 'dvd'),
         'bk': ('books', 'kitchen'),
@@ -64,11 +82,15 @@ def main():
         'ke': ('kitchen', 'electronics'),
         'ek': ('electronics', 'kitchen'),
         'dk': ('dvd','kitchen')
-        
     }
-    return datasets, combinations
-    
 
-if __name__ == '__main__':
-    main()
+    return data_dict, combinations
+
+if __name__ == "__main__":
+    datasets, combinations = preprocess_datasets()
+    # You can now work with the preprocessed datasets and combinations.
+    # For example:
+    # print(datasets["books"])
+    # print(combinations["bd"])
+
 
