@@ -1,7 +1,7 @@
 import nltk
 import pandas as pd
 from functools import partial
-from data_loader import main as load_data
+import data_loader
 
 stop = set(('i','im','ive', 'me','my','myself','we','our','ours','ourselves','you','youre','youve','youll','youd','your','yours','yourself','yourselves','he','him','his','himself','she','shes','her','hers','herself','it','its','itself','they','them','their','theirs','themselves','what','which','who','whom','this','that','thatll','these','those','am','is','are','was','were','be','been','being','have','has','had','having','do','does','did','doing','a','an','the','and','but','if','or','because','as','until','while','of','at','by','for','with','about','against','between','into','through','during','before','after','above','below','to','from','up','down','in','out','on','off','over','under','again','further','then','once','here','there','when','where','why','how','all','any','both','each','few','more','most','other','some','such','only','own','same','so','than','too','very','s','t','can','will','just','should','shouldve','now','d','ll','m','o','re','ve','y','ma'))
 
@@ -45,9 +45,9 @@ def preprocess_dataframe(df, col_name):
 def filter_dataset_by_token_count(df, token_count):
     return df[df["#token"] > token_count].reset_index(drop=True)
 
-def preprocess_datasets():
+def preprocess_datasets(df_books, df_dvd, df_kitchen, df_electronics):
     # Load datasets
-    df_books, df_dvd, df_kitchen, df_electronics = load_data()
+    
 
     data_dict = {
         'books': df_books,
@@ -87,10 +87,13 @@ def preprocess_datasets():
     return data_dict, combinations
 
 if __name__ == "__main__":
-    datasets, combinations = preprocess_datasets()
-    # You can now work with the preprocessed datasets and combinations.
-    # For example:
-    # print(datasets["books"])
-    # print(combinations["bd"])
+    # Load the data
+    df_books, df_dvd, df_kitchen, df_electronics = data_loader.main()
+
+    # Preprocess the datasets
+    datasets, combinations = preprocess_datasets(df_books, df_dvd, df_kitchen, df_electronics)
+
+    # Print or check results for testing
+    print(datasets["books"])
 
 

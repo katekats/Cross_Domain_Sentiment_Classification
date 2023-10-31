@@ -11,7 +11,8 @@ from mlxtend.classifier import SuperLearner
 import fasttext  # assuming you have installed the fasttext library
 from feature_extractor import sample_df, fasttext, fasttext2
 from embedding_vectorizers import TfidfEmbeddingVectorizer, MeanEmbeddingVectorizer
-
+import data_loader 
+import data preprocessor
 
 
 RANDOM_STATE = 0
@@ -46,7 +47,8 @@ def train_ensemble(X_train, y_train):
     return ensemble
 
 def main():
-               
+            df_books, df_dvd, df_kitchen, df_electronics = data_loader.main()
+                                                       = data_preprocessor.preprocess_datasets()
             X_train, X_test, y_train, y_test = train_test_split(
                 sample_df.drop(columns=['label']).values, 
                 sample_df.label.values,
