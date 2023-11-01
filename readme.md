@@ -20,7 +20,7 @@ pip install -r requirements.txt
 ├── data_loader.py          # Script to load and process raw data
 ├── data_preprocessor.py    # Script containing data preprocessing functions
 ├── feature_extractor.py    # Script for feature extraction and embeddings
-├── classifiers.py          # Script containing classifier pipelines and ensemble model
+├── embedding_vectorizer.py          # Script containing classifier pipelines and ensemble model
 ├── main.py                 # Main script to execute the project
 └── README.md               # Documentation and usage instructions
 ```
