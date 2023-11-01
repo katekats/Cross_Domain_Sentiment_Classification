@@ -1,24 +1,18 @@
 
-import os, regex as re
-import pandas as pd
-import numpy as np
-import nltk
-import string
-import scipy as sp
+iimport scipy as sp
 from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer 
-from nltk.stem.wordnet import WordNetLemmatizer 
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
-from nltk.stem.porter import PorterStemmer
+from nltk.stem.snowball import SnowballStemmer
 from scipy.stats import chi2_contingency, chi2
-import data_loader 
 
+# Make sure to download the necessary NLTK resources:
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
 
-#Functions for preprocessing steps
-stop_words = set(('i','im','ive', 'me','my','myself','we','our','ours','ourselves','you','youre','youve','youll','youd','your','yours','yourself','yourselves','he','him','his','himself','she','shes','her','hers','herself','it','its','itself','they','them','their','theirs','themselves','what','which','who','whom','this','that','thatll','these','those','am','is','are','was','were','be','been','being','have','has','had','having','do','does','did','doing','a','an','the','and','but','if','or','because','as','until','while','of','at','by','for','with','about','against','between','into','through','during','before','after','above','below','to','from','up','down','in','out','on','off','over','under','again','further','then','once','here','there','when','where','why','how','all','any','both','each','few','more','most','other','some','such','only','own','same','so','than','too','very','s','t','can','will','just','should','shouldve','now','d','ll','m','o','re','ve','y','ma'))
-stemmer = nltk.stem.SnowballStemmer('english')
-
+# Functions for preprocessing steps
+stop_words = set(stopwords.words('english'))  # You can add more stopwords to this set if required
+stemmer = SnowballStemmer('english')
 
 def add_word_count_column(df, text_column_name):
     """
@@ -148,25 +142,49 @@ def perform_chi_squared_test(table):
 
 
 def main():
-    df_books, df_dvd, df_kitchen, df_electronics = data_loader.main()
-    # Assuming df_books, df_dvd, df_kitchen, df_electronics are already defined
-    df_books = add_word_count_column(df_books, 'reviews')
-    df_books = shuffle_and_add_code(df_books, 'books')
+    try:
+        # Replace 'data_loader.main()' with the actual code to load your data
+        df_books, df_dvd, df_kitchen, df_electronics = data_loader.main()
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        return
 
-    df_dvd = add_word_count_column(df_dvd, 'reviews')
-    df_dvd = shuffle_and_add_code(df_dvd, 'dvd')
+    try:
+        df_books = add_word_count_column(df_books, 'reviews')
+        df_books = shuffle_and_add_code(df_books, 'books')
 
-    df_kitchen = add_word_count_column(df_kitchen, 'reviews')
-    df_kitchen = shuffle_and_add_code(df_kitchen, 'kitchen')
+        df_dvd = add_word_count_column(df_dvd, 'reviews')
+        df_dvd = shuffle_and_add_code(df_dvd, 'dvd')
 
-    df_electronics = add_word_count_column(df_electronics, 'reviews')
-    df_electronics = shuffle_and_add_code(df_electronics, 'electronics')
+        df_kitchen = add_word_count_column(df_kitchen, 'reviews')
+        df_kitchen = shuffle_and_add_code(df_kitchen, 'kitchen')
 
-    # Apply the preprocessing function to the DataFrame
-    sample_df = apply_preprocessing(sample_df, 'reviews')
+        df_electronics = add_word_count_column(df_electronics, 'reviews')
+        df_electronics = shuffle_and_add_code(df_electronics, 'electronics')
+    except KeyError as e:
+        print(f"DataFrame does not contain the expected columns: {e}")
+        return
+    except Exception as e:
+        print(f"Error processing dataframes: {e}")
+        return
 
-    # Assuming `sample_df` has a column `tokenized`
-    sample_df = pos_counts(sample_df, 'tokenized')
-    # Your contingency table
-    table = [[107099, 107515], [151608, 142169]]
-    perform_chi_squared_test(table)
+    # Create a combined sample DataFrame for demonstration; replace with actual data processing as needed
+    try:
+        sample_df = pd.concat([df_books, df_dvd, df_kitchen, df_electronics], ignore_index=True)
+        sample_df = apply_preprocessing(sample_df, 'reviews')
+        sample_df = pos_counts(sample_df, 'tokenized')
+    except Exception as e:
+        print(f"Error applying preprocessing: {e}")
+        return
+
+    try:
+        # Your contingency table
+        table = [[107099, 107515], [151608, 142169]]
+        perform_chi_squared_test(table)
+    except ValueError as e:
+        print(f"Error with Chi-squared test: {e}")
+    except Exception as e:
+        print(f"General error with statistical test: {e}")
+
+if __name__ == "__main__":
+    main())
