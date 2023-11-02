@@ -1,11 +1,13 @@
-
-iimport scipy as sp
+import scipy as sp
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nltk.stem.snowball import SnowballStemmer
 from scipy.stats import chi2_contingency, chi2
-
+import data_loader
+import nltk
+import pandas as pd
+import re
 # Make sure to download the necessary NLTK resources:
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
@@ -17,7 +19,6 @@ stemmer = SnowballStemmer('english')
 def add_word_count_column(df, text_column_name):
     """
     Adds a column to the DataFrame that contains the word count of the reviews.
-    
     Parameters:
     df (pandas.DataFrame): The DataFrame to modify.
     text_column_name (str): The name of the column that contains the text to count words from.
@@ -187,4 +188,4 @@ def main():
         print(f"General error with statistical test: {e}")
 
 if __name__ == "__main__":
-    main())
+    main()

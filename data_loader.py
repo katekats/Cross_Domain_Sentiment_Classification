@@ -58,7 +58,7 @@ def load_dataset(path, product_code):
 
 def main(base_path="."):
     # Load datasets    
-    base_path = 'Downloads/processed_acl'
+    base_path = 'processed_acl'
     df_books = load_dataset(f'{base_path}/books', "books")
     df_dvd = load_dataset(f'{base_path}/dvd', "dvd")
     df_kitchen = load_dataset(f'{base_path}/kitchen', "kitchen")
