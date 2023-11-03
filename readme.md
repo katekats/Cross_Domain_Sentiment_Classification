@@ -15,7 +15,7 @@ pip install -r requirements.txt
 The dataset for Cross-Domain Sentiment Classification can be found in the following link:
 https://www.cs.jhu.edu/~mdredze/datasets/sentiment/
 
-## **Steps for running the scripts**
+## **Description of the scripts**
 
 **For the CRD-SentEnse Model:**
 
