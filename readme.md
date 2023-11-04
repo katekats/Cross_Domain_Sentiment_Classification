@@ -1,6 +1,8 @@
 # Cross-Domain Sentiment Classification with Chi-square for Feature Extraction and Ensembling
 
-This project focuses on text classification using various feature extraction techniques, including TF-IDF, FastText embeddings, and Chi-squared statistics. Additionally, an ensemble learning approach using SuperLearner from mlxtend is employed.
+This project focuses on text classification using various feature extraction techniques, including TF-IDF, FastText embeddings, and Chi-squared statistics. Additionally, an ensemble learning approach using SuperLearner from mlxtend is employed. The code is part of the paper: "Katerina Katsarou and Devvrat Singh Shekhawat. 2020. CRD-SentEnse: Cross-domain Sentiment Analysis using an Ensemble Model. In Proceedings of the 11th International Conference on Management of Digital EcoSystems (MEDES '19). Association for Computing Machinery, New York, NY, USA, 88–94. https://doi.org/10.1145/3297662.3365808".  
+
+Micro-blogging and comments on social media include valuable information about people's emotions and opinions towards products, political and social topics and so forth. Unfortunately, due to the large volume of data, is infeasible to label all these comments and reviews. Additionally, having this data labelled manually by human experts is very expensive, time-consuming and applicable only for small amounts of data. As a result, a more scalable solution is needed. Cross-domain sentiment analysis addresses the problem of training a model for classifying a text with respect to its sentiment polarity as a negative, positive (and/ or neutral), using data from one domain (source domain), then the same model is tested using data from a different unlabeled domain (target domain). Cross-domain sentiment analysis is still an open research issue, as the classification performance is still not as good as in the in-domain sentiment analysis, even though proposed approaches have improved significantly. In this paper, we propose a framework for cross-domain sentiment analysis that uses the chi-square test with the data in the source domain. Firstly, we eliminate domain-related words from the source domain that do not bear transferable knowledge to the target domain. Secondly, the chi-square test is utilized for finding the important words regarding the sentiment polarity. Subsequently, we develop a second model that drops the nouns both from source and target domains and we use TFIDF weights for finding the important words in both domains. Finally, we use a stacking ensemble model that combines the two above proposed models for enhancing the performance of the proposed framework.
 
 ## Getting Started
 For running the framework, this work recommends creating a new virtual environment that uses Python version 3.7.7.
@@ -15,7 +17,7 @@ pip install -r requirements.txt
 The dataset for Cross-Domain Sentiment Classification can be found in the following link:
 https://www.cs.jhu.edu/~mdredze/datasets/sentiment/
 
-## **Steps for running the scripts**
+## **Description of the scripts**
 
 **For the CRD-SentEnse Model:**
 
