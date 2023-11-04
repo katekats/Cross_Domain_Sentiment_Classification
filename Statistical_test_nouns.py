@@ -14,7 +14,6 @@ nltk.download('averaged_perceptron_tagger')
 
 # Functions for preprocessing steps
 stop_words = set(stopwords.words('english'))  # You can add more stopwords to this set if required
-stemmer = SnowballStemmer('english')
 
 def add_word_count_column(df, text_column_name):
     """
@@ -75,13 +74,12 @@ def preprocess_text(text):
     # Tokenize
     tokens = nltk.word_tokenize(text)
     
-    # Remove stop words and stem
-    tokens = [stemmer.stem(word) for word in tokens if word not in stop_words]
+    # Remove stop words
+    tokens = [word for word in tokens if word not in stop_words]
     
     # Join the words back into one string separated by space
     return ' '.join(tokens), len(tokens)
 
-# Applying preprocessing to the DataFrame
 def apply_preprocessing(df, column_name):
     """
     Apply text preprocessing to a specific column in DataFrame.
@@ -91,12 +89,20 @@ def apply_preprocessing(df, column_name):
     - column_name: The name of the column to preprocess.
     
     Returns:
-    - A new DataFrame with the processed column and token count.
+    - A new DataFrame with the processed column, token count, and tokenized text.
     """
-    preprocessed = df[column_name].apply(preprocess_text)
-    df['preprocessed'] = preprocessed.apply(lambda x: x[0])
-    df['token_count'] = preprocessed.apply(lambda x: x[1])
+    # Apply the preprocess_text function and get preprocessed text and tokens
+    preprocessed_and_tokens = df[column_name].apply(preprocess_text)
+    
+    # Create columns for preprocessed text and token count
+    df['preprocessed'] = preprocessed_and_tokens.apply(lambda x: x[0])
+    df['token_count'] = preprocessed_and_tokens.apply(lambda x: x[1])
+    
+    # Create a 'tokenized' column which will store the actual tokens
+    df['tokenized'] = preprocessed_and_tokens.apply(lambda x: nltk.word_tokenize(x[0]))
+    
     return df
+
 
 
 
@@ -116,30 +122,29 @@ def pos_counts(df, token_column):
 
 
 
-# chi-squared test with similar proportions
-
-def perform_chi_squared_test(table):
+def perform_chi_squared_test(table, category_name):
     stat, p, dof, expected = chi2_contingency(table)
+    print(f'Chi-squared test for {category_name}')
     print(f'dof={dof}')
-    print(expected)
+    print(f'Expected frequencies:\n{expected}')
 
     prob = 0.95
     critical = chi2.ppf(prob, dof)
     print(f'probability={prob}, critical={critical}, stat={stat}')
     
     if abs(stat) >= critical:
-        print('Dependent (reject H0)')
+        print('Dependent (reject H0) - Significant difference in {0} counts by category.'.format(category_name))
     else:
-        print('Independent (fail to reject H0)')
+        print('Independent (fail to reject H0) - No significant difference in {0} counts by category.'.format(category_name))
     
     alpha = 1.0 - prob
     print(f'significance={alpha}, p={p}')
     
     if p <= alpha:
-        print('Dependent (reject H0)')
+        print('Dependent (reject H0) - Significant difference in {0} counts by category.'.format(category_name))
     else:
-        print('Independent (fail to reject H0)')
-
+        print('Independent (fail to reject H0) - No significant difference in {0} counts by category.'.format(category_name))
+    print('\n')
 
 
 def main():
@@ -171,17 +176,32 @@ def main():
 
     # Create a combined sample DataFrame for demonstration; replace with actual data processing as needed
     try:
+        # Before concatenation, add a 'category' column to each DataFrame
+        df_books['category'] = 'Books'
+        df_dvd['category'] = 'DVD'
+        df_kitchen['category'] = 'Kitchen'
+        df_electronics['category'] = 'Electronics'
+
+# Concatenate the DataFrames and keep the 'category' column
+        sample_df = pd.concat([df_books, df_dvd, df_kitchen, df_electronics], ignore_index=True)
+
         sample_df = pd.concat([df_books, df_dvd, df_kitchen, df_electronics], ignore_index=True)
         sample_df = apply_preprocessing(sample_df, 'reviews')
+    # Now that we have the 'tokenized' column, we can call pos_counts
         sample_df = pos_counts(sample_df, 'tokenized')
     except Exception as e:
         print(f"Error applying preprocessing: {e}")
         return
 
     try:
-        # Your contingency table
-        table = [[107099, 107515], [151608, 142169]]
-        perform_chi_squared_test(table)
+        # Assuming you have a 'category' column that has the product category as 'books', 'dvd', etc.
+        # Create contingency tables for noun and verb counts
+        noun_count_table = pd.crosstab(sample_df['category'], sample_df['noun_count'])
+        verb_count_table = pd.crosstab(sample_df['category'], sample_df['verb_count'])
+        
+        # Perform Chi-squared tests
+        perform_chi_squared_test(noun_count_table, 'noun')
+        perform_chi_squared_test(verb_count_table, 'verb')
     except ValueError as e:
         print(f"Error with Chi-squared test: {e}")
     except Exception as e:
