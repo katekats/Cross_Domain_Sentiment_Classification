@@ -198,10 +198,16 @@ def main():
         # Create contingency tables for noun and verb counts
         noun_count_table = pd.crosstab(sample_df['category'], sample_df['noun_count'])
         verb_count_table = pd.crosstab(sample_df['category'], sample_df['verb_count'])
-        
+        adjective_count_table = pd.crosstab(sample_df['category'], sample_df['adjective_count'])
+        adverb_count_table = pd.crosstab(sample_df['category'], sample_df['adverb_count'])
+        other_count_table = pd.crosstab(sample_df['category'], sample_df['other_count'])
         # Perform Chi-squared tests
         perform_chi_squared_test(noun_count_table, 'noun')
         perform_chi_squared_test(verb_count_table, 'verb')
+        perform_chi_squared_test(noun_count_table, 'noun')
+        perform_chi_squared_test(adjective_count_table, 'adjective')
+        perform_chi_squared_test(adverb_count_table, 'adverb')
+        perform_chi_squared_test(other_count_table, 'other')
     except ValueError as e:
         print(f"Error with Chi-squared test: {e}")
     except Exception as e:
