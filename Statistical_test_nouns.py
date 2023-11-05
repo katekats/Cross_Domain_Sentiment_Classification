@@ -194,7 +194,6 @@ def main():
         return
 
     try:
-        # Assuming you have a 'category' column that has the product category as 'books', 'dvd', etc.
         # Create contingency tables for noun and verb counts
         noun_count_table = pd.crosstab(sample_df['category'], sample_df['noun_count'])
         verb_count_table = pd.crosstab(sample_df['category'], sample_df['verb_count'])
