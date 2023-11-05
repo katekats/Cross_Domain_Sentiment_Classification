@@ -188,17 +188,15 @@ def main():
         return
 
     try:
-        # Create contingency tables for POS counts against 'code' and then 'label'
+       # Create contingency tables for part of speech counts by product category
         pos_columns = ['noun_count', 'verb_count', 'adjective_count', 'adverb_count', 'other_count']
         for pos_col in pos_columns:
-            # Test against product category
             category_table = pd.crosstab(sample_df['code'], sample_df[pos_col])
             perform_chi_squared_test(category_table, f'{pos_col} by code')
             
             # Create contingency tables for part of speech counts by sentiment label
             sentiment_table = pd.crosstab(sample_df['label'], sample_df[pos_col])
             perform_chi_squared_test(sentiment_table, f'{pos_col} by label')
-
     except ValueError as e:
         print(f"Error with Chi-squared test: {e}")
     except Exception as e:
