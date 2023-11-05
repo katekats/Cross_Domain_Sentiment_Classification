@@ -151,6 +151,7 @@ def main():
     try:
         # Replace 'data_loader.main()' with the actual code to load your data
         df_books, df_dvd, df_kitchen, df_electronics = data_loader.main()
+        
     except Exception as e:
         print(f"Error loading data: {e}")
         return
@@ -176,15 +177,8 @@ def main():
 
     # Create a combined sample DataFrame for demonstration; replace with actual data processing as needed
     try:
-        # Before concatenation, add a 'category' column to each DataFrame
-        df_books['category'] = 'Books'
-        df_dvd['category'] = 'DVD'
-        df_kitchen['category'] = 'Kitchen'
-        df_electronics['category'] = 'Electronics'
 
 # Concatenate the DataFrames and keep the 'category' column
-        sample_df = pd.concat([df_books, df_dvd, df_kitchen, df_electronics], ignore_index=True)
-
         sample_df = pd.concat([df_books, df_dvd, df_kitchen, df_electronics], ignore_index=True)
         sample_df = apply_preprocessing(sample_df, 'reviews')
     # Now that we have the 'tokenized' column, we can call pos_counts
@@ -194,20 +188,17 @@ def main():
         return
 
     try:
-        # Assuming you have a 'category' column that has the product category as 'books', 'dvd', etc.
-        # Create contingency tables for noun and verb counts
-        noun_count_table = pd.crosstab(sample_df['category'], sample_df['noun_count'])
-        verb_count_table = pd.crosstab(sample_df['category'], sample_df['verb_count'])
-        adjective_count_table = pd.crosstab(sample_df['category'], sample_df['adjective_count'])
-        adverb_count_table = pd.crosstab(sample_df['category'], sample_df['adverb_count'])
-        other_count_table = pd.crosstab(sample_df['category'], sample_df['other_count'])
-        # Perform Chi-squared tests
-        perform_chi_squared_test(noun_count_table, 'noun')
-        perform_chi_squared_test(verb_count_table, 'verb')
-        perform_chi_squared_test(noun_count_table, 'noun')
-        perform_chi_squared_test(adjective_count_table, 'adjective')
-        perform_chi_squared_test(adverb_count_table, 'adverb')
-        perform_chi_squared_test(other_count_table, 'other')
+        # Create contingency tables for POS counts against 'code' and then 'label'
+        pos_columns = ['noun_count', 'verb_count', 'adjective_count', 'adverb_count', 'other_count']
+        for pos_col in pos_columns:
+            # Test against product category
+            category_table = pd.crosstab(sample_df['code'], sample_df[pos_col])
+            perform_chi_squared_test(category_table, f'{pos_col} by code')
+            
+            # Create contingency tables for part of speech counts by sentiment label
+            sentiment_table = pd.crosstab(sample_df['label'], sample_df[pos_col])
+            perform_chi_squared_test(sentiment_table, f'{pos_col} by label')
+
     except ValueError as e:
         print(f"Error with Chi-squared test: {e}")
     except Exception as e:
